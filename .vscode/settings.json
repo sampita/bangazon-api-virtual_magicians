@@ -1,0 +1,10 @@
+{
+    "python.pythonPath": "virtual-magicians-api/bin/python3",
+    
+
+
+"python.linting.pylintArgs": [
+    "--load-plugins=pylint_django"
+],
+
+}
