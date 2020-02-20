@@ -1,3 +1,5 @@
+.pylintrc
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -12,8 +14,7 @@ local_settings.py
 .python-version
 # dotenv
 .env
-# virtualenv
-workforceenv/
+
 .vscode
 .DS_Store
 *.sqlite3
@@ -26,3 +27,7 @@ migrations
 #db location
 views/connection.py
 hrapp/views/connection.py
+#Virtual Environments
+BangazonEnv/
+virtual-magicians-api/
+workforceenv/
