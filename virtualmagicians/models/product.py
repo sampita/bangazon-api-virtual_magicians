@@ -14,8 +14,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     product_type_id = models.ForeignKey(ProductType, on_delete=models.DO_NOTHING)
 
-class Meta:
+    class Meta:
 
-    ordering = ("name", )
-    verbose_name = ("product")
-    verbose_name_plural = ("products")
+        ordering = ("name", )
+        verbose_name = ("product")
+        verbose_name_plural = ("products")
