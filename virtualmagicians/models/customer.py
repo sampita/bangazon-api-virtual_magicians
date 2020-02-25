@@ -2,15 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models.expressions import F
 
 class Customer(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=55)
-    last_name = models.CharField(max_length=55)
-    email = models.CharField(max_length=55)
-    created_at = models.DateTimeField()
-    is_active = models.BooleanField()
+    # first_name, last_name, email, created_at, and is_active is all inherited from Django's user
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
