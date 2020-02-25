@@ -7,11 +7,11 @@ from django.db.models.expressions import F
 class Customer(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=55)
-    last_name = models.CharField(max_length=55)
-    email = models.CharField(max_length=55)
-    created_at = models.DateTimeField()
-    is_active = models.BooleanField()
+    # first_name = models.CharField(max_length=55)
+    # last_name = models.CharField(max_length=55)
+    # email = models.CharField(max_length=55)
+    # created_at = models.DateTimeField()
+    # is_active = models.BooleanField()
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
