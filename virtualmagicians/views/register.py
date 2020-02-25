@@ -64,12 +64,6 @@ def register_user(request):
     )
 
     customer = Customer.objects.create(
-        # email=req_body['email'],
-        # password=req_body['password'],
-        # first_name=req_body['first_name'],
-        # last_name=req_body['last_name'],
-        # created_at=req_body['created_at'],
-        # is_active=req_body['is_active'],
         user=new_user
     )
 
