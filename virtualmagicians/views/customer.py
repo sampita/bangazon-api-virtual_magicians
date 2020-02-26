@@ -6,7 +6,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from virtualmagicians import Customer
+from virtualmagicians.models import Customer
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for customers
@@ -19,7 +19,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
             view_name='customer',
             lookup_field='id'
         )
-        fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'is_active', 'date_joined')
+        fields = ('id', 'user')
         depth = 2
         
 class Customers(ViewSet):
@@ -36,3 +36,19 @@ class Customers(ViewSet):
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
+    
+    def list(self, request):
+        """Handle GET requests to customers resource
+        Returns:
+            Response -- JSON serialized list of park attractions
+        """
+
+        customers = Customer.objects.all()
+
+        customer = self.request.query_params.get('customer', None)
+        if customer is not None:
+            customers = customers.filter(customer__id=customer)
+
+        serializer = CustomerSerializer(customers, many=True, context={'request': request})
+
+        return Response(serializer.data)
