@@ -19,7 +19,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
             view_name='customer',
             lookup_field='id'
         )
-        fields = ('id', 'user')
+        fields = ('id', 'user',)
         depth = 2
         
 class Customers(ViewSet):
@@ -31,6 +31,9 @@ class Customers(ViewSet):
         """
 
         try:
+            # user = request.auth.user.customer.id
+            # customer = Customer.objects.filter(customer_id=user)
+            
             customer = Customer.objects.get(pk=pk)
             serializer = CustomerSerializer(customer, context={'request': request})
             return Response(serializer.data)
@@ -40,14 +43,15 @@ class Customers(ViewSet):
     def list(self, request):
         """Handle GET requests to customers resource
         Returns:
-            Response -- JSON serialized list of park attractions
-        """
-
+            Response -- JSON serialized list of customers
+        """      
         customers = Customer.objects.all()
-
         customer = self.request.query_params.get('customer', None)
+        
         if customer is not None:
-            customers = customers.filter(customer__id=customer)
+            # user = request.auth.user.customer.id
+            # customer = Customer.objects.filter(customer_id=user)
+            customers = customers.filter(id = request.auth.user.customer.id)
 
         serializer = CustomerSerializer(customers, many=True, context={'request': request})
 

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth.models import User
+from virtualmagicians.models import Customer
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for customers
@@ -35,3 +36,28 @@ class Users(ViewSet):
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
+    
+    def list(self, request):
+        """Handle GET requests to users resource
+        Returns:
+            Response -- JSON serialized list of users
+        """      
+        users = User.objects.all()
+        profile = self.request.query_params.get('profile', None)
+        
+        current_user = Customer.objects.get(user=request.auth.user)
+        
+        # user_profile = self.request.query_params.get(
+        #     'profile', None)
+        if profile is not None:
+            users = User.filter(pk=request.auth.user)
+
+        # customer = self.request.query_params.get('customer', None)
+        # if user is not None:
+        #     user = request.auth.user.customer.id
+        #     customer = Customer.objects.filter(customer_id=user)
+            # customers = customers.filter(customer__id=customer)
+
+        serializer = UserSerializer(users, many=True, context={'request': request})
+
+        return Response(serializer.data)
