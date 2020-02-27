@@ -23,21 +23,21 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
 class Products(ViewSet):
 
+    """Products for Bangazon"""
+
     def create(self, request):
         """Handle POST operations
         Returns:
-            Response -- JSON serialized Product instance
+            Response -- JSON serialized Products instance
         """
         newproduct = Product()
-        newproduct.customer_id = request.data["customer_id"]
-        # newproduct.customer_id = request.auth.user.customer.id
         newproduct.name = request.data["name"]
+        newproduct.customer_id = request.auth.user.customer.id
         newproduct.price = request.data["price"]
         newproduct.description = request.data["description"]
         newproduct.quantity = request.data["quantity"]
         newproduct.location = request.data["location"]
         newproduct.image_path = request.data["image_path"]
-        newproduct.created_at = request.data["created_at"]
         newproduct.product_type_id = request.data["product_type_id"]
         newproduct.save()
 
@@ -45,10 +45,11 @@ class Products(ViewSet):
 
         return Response(serializer.data)
 
+
     def retrieve(self, request, pk=None):
-        """Handle GET requests for single park area
+        """Handle GET requests for single product
         Returns:
-            Response -- JSON serialized park area instance
+            Response -- JSON serialized product instance
         """
         try:
             product = Product.objects.get(pk=pk)
@@ -56,6 +57,16 @@ class Products(ViewSet):
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
+
+    def list(self, request):
+        """Handle GET requests to products resource
+        Returns:
+            Response -- JSON serialized list of products
+        """
+        products = Product.objects.all()
+        serializer = ProductSerializer(
+            products, many=True, context={'request': request})
+        return Response(serializer.data)
 
     # def update(self, request, pk=None):
     #     """Handle PUT requests for a park area
@@ -85,13 +96,3 @@ class Products(ViewSet):
 
     #     except Exception as ex:
     #         return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    # def list(self, request):
-    #     """Handle GET requests to park areas resource
-    #     Returns:
-    #         Response -- JSON serialized list of park areas
-    #     """
-    #     areas = ParkArea.objects.all()
-    #     serializer = ParkAreaSerializer(
-    #         areas, many=True, context={'request': request})
-    #     return Response(serializer.data)
