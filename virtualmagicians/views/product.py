@@ -1,4 +1,4 @@
-"""Park Areas for Kennywood Amusement Park"""
+"""View module for handling requests about products"""
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
@@ -6,11 +6,11 @@ from rest_framework import serializers
 from rest_framework import status
 from virtualmagicians.models import Product
 
-
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for products
+
     Arguments:
-        serializers
+        serializers.HyperlinkedModelSerializer
     """
     class Meta:
         model = Product
