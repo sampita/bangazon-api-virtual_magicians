@@ -8,7 +8,7 @@ from virtualmagicians.views import register_user, login_user, Products, Order, O
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'products', Products, 'product')
 router = routers.DefaultRouter(trailing_slash=False)
-router.register(r'orders', Orders, 'order')
+router.register(r'orders', Order, 'order')
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'order_product', OrderProduct, 'order_product')
 

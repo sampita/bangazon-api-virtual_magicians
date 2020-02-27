@@ -13,7 +13,7 @@ class Customer(models.Model):
         return f'{self.first_name} {self.last_name}'
 
     class Meta:
-        ordering = (F('user.date_joined').asc(nulls_last=True),)
+        ordering = (F('id').asc(nulls_last=True),)
         #Instances of F() act as a reference to a model field within a query. These references can then be used in query filters to compare the values of two different fields on the same model instance.
         
         #In this case, order by the date the user joined (by ascending) and null fields last.

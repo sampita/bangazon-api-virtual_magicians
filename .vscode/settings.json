@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
     "python.pythonPath": "virtual-magicians/bin/python",
+=======
+    "python.pythonPath": "BangazonEnv/bin/python",
+>>>>>>> master
     
 
 
