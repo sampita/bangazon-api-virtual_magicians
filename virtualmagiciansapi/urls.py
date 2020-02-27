@@ -2,11 +2,15 @@
 from django.urls import include, path
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
-from virtualmagicians.views import register_user, login_user, Products
+from virtualmagicians.views import register_user, login_user, Products, Orders, OrderProducts
 
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'products', Products, 'product')
+router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'orders', Orders, orders')
+router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'order_products', OrderProducts, 'order_product')
 
 urlpatterns = [
     path('', include(router.urls)),

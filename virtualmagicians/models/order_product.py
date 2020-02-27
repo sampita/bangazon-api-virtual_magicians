@@ -11,3 +11,6 @@ class OrderProduct(models.Model):
         ordering = ("order_id", )
         verbose_name = ("OrderProduct")
         verbose_name_plural = ("OrderProducts")
+
+    def __str__(self):
+        return f'Order {self.order.id} contains \n ${self.product.name}'
