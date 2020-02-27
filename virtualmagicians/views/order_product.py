@@ -16,14 +16,14 @@ class OrderProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = OrderProduct
         url = serializers.HyperlinkedIdentityField(
-            view_name='OrderProduct',
+            view_name='OrderProducts',
             lookup_field='id'
         )
-        fields = ('id', 'product_id', 'order_id', 'url')
+        fields = ('id', 'product_id', 'order_id')
         depth = 2
 
 
-class OrderProduct(ViewSet):
+class OrderProducts(ViewSet):
 
 
     def create(self, request):
@@ -31,7 +31,7 @@ class OrderProduct(ViewSet):
         Returns:
             Response -- JSON serialized Order Product instance
         """
-        new_order_product = OrderProduct()
+        new_order_product = OrderProducts()
         new_order_product.order_id = request.data["order_id"]
         new_order_product.product_id = request.data["product_id"]
         new_order_product.save()
@@ -77,7 +77,7 @@ class OrderProduct(ViewSet):
             Response -- 200, 404, or 500 status code
         """
         try:
-            order_product = Order.objects.get(pk=pk)
+            order_product = OrderProducts.objects.get(pk=pk)
             order_product.delete()
 
             return Response({}, status=status.HTTP_204_NO_CONTENT)

@@ -18,10 +18,10 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             view_name='order',
             lookup_field='id'
         )
-        fields = ('id', 'created_at', 'customer', 'payment_type_id' )
+        fields = ('id', 'created_at', 'customer')
         depth = 2
 
-class Order(ViewSet):
+class Orders(ViewSet):
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for a single order
@@ -30,7 +30,7 @@ class Order(ViewSet):
         """
         try:
             order = Order.objects.get(pk=pk)
-            serializer = OrderSerializer(Order_item, context={'request': request})
+            serializer = OrderSerializer(Order, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
@@ -45,11 +45,11 @@ class Order(ViewSet):
 
         logged_in_customer = self.request.query_params.get('customer', False)
         if logged_in_customer == 'true':
-            order = order.filter(customer__id=customer_id)
+            order = Order.objects.filter(customer__id=customer_id)
 
         open_order = self.request.query_params.get('open', False)
         if open_order == 'true':
-            order = order.filter(payment_type__id=None)
+            order = Order.objects.filter(payment_type__id=None)
 
         serializer = OrderSerializer(
            order,
