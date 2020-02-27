@@ -47,16 +47,8 @@ class Users(ViewSet):
         
         current_user = Customer.objects.get(user=request.auth.user)
         
-        # user_profile = self.request.query_params.get(
-        #     'profile', None)
         if profile is not None:
             users = User.filter(pk=request.auth.user)
-
-        # customer = self.request.query_params.get('customer', None)
-        # if user is not None:
-        #     user = request.auth.user.customer.id
-        #     customer = Customer.objects.filter(customer_id=user)
-            # customers = customers.filter(customer__id=customer)
 
         serializer = UserSerializer(users, many=True, context={'request': request})
 

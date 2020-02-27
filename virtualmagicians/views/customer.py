@@ -45,14 +45,24 @@ class Customers(ViewSet):
         Returns:
             Response -- JSON serialized list of customers
         """      
-        customers = Customer.objects.all()
-        customer = self.request.query_params.get('customer', None)
+        # customers = Customer.objects.all()
+        # customer = self.request.query_params.get('customer', None)
         
-        if customer is not None:
-            # user = request.auth.user.customer.id
-            # customer = Customer.objects.filter(customer_id=user)
-            customers = customers.filter(id = request.auth.user.customer.id)
+        # if customer is not None:
+        #     # user = request.auth.user.customer.id
+        #     # customer = Customer.objects.filter(customer_id=user)
+        #     customers = customers.filter(id = request.auth.user.customer.id)
 
-        serializer = CustomerSerializer(customers, many=True, context={'request': request})
+        # serializer = CustomerSerializer(customers, many=True, context={'request': request})
+
+        # return Response(serializer.data)
+        customers = Customer.objects.filter(id = request.auth.user.customer.id)
+
+        customer = self.request.query_params.get('customer', None)
+
+        if customer is not None:
+            customers = customers.filter(id=customer)
+
+        serializer = CustomerSerializer(customers, many = True, context={'request': request})
 
         return Response(serializer.data)
