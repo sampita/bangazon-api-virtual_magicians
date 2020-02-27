@@ -1,16 +1,13 @@
 from django.db import models
 from .customer import Customer
 from .payment import PaymentType
-from .order_product import OrderProduct
 
 class Order(models.Model):
     
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING, related_name="orders")
     # what is related_name? -SP
     payment = models.ForeignKey(PaymentType, on_delete=models.DO_NOTHING, related_name="payment_types")
-    created_at = models.DateTimeField()
-    order_product = models.ForeignKey(OrderProduct, on_delete=models.DO_NOTHING, related_name="order_products")
-    
+    created_at = models.DateTimeField()    
     class Meta:
         ordering = ("created_at", )
         verbose_name = ("order")

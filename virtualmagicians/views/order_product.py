@@ -3,7 +3,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from virtualmagicians.models import Product, Orders, Customer
+from virtualmagicians.models import Product, Order, Customer, OrderProduct
 
 
 
@@ -23,7 +23,7 @@ class OrderProductSerializer(serializers.HyperlinkedModelSerializer):
         depth = 2
 
 
-class OrderProducts(ViewSet):
+class OrderProduct(ViewSet):
 
 
     def create(self, request):
@@ -39,7 +39,7 @@ class OrderProducts(ViewSet):
         serializer = OrderProductSerializer(
             new_order_product, context={'request': request})
 
-        return Response(serializer.data
+        return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
             """Handle GET requests for order_product
@@ -49,7 +49,7 @@ class OrderProducts(ViewSet):
             """
 
             try:
-            order_products = Order.objects.get(pk=pk)
+                order_product = OrderProduct.objects.get(pk=pk)
                 serializer = OrderProductSerializer(order_product, context={'request': request})
                 return Response(serializer.data)
             except Exception as ex:
@@ -61,14 +61,14 @@ class OrderProducts(ViewSet):
         Returns:
             Response -- JSON serialized list of order_products
         """
-        order_products = OrderProduct.objects.all()
+        order_product = OrderProduct.objects.all()
 
         order_id = self.request.query_params.get('order', None)
         if order_id is not None:
-            order_products = order_products.filter(order__id=order_id)
+            order_product = order_product.filter(order__id=order_id)
 
         serializer = OrderProductSerializer(
-            order_products, many=True, context={'request': request})
+            order_product, many=True, context={'request': request})
         return Response(serializer.data)
 
     def destroy(self, request, pk=None):
