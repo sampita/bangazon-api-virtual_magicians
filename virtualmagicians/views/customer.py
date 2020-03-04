@@ -19,7 +19,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
             view_name='customer',
             lookup_field='id'
         )
-        fields = ('id', 'user_id',)
+        fields = ('id', 'user',)
         depth = 2
         
 class Customers(ViewSet):
