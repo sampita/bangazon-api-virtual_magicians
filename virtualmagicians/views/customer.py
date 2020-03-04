@@ -19,7 +19,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
             view_name='customer',
             lookup_field='id'
         )
-        fields = ('id', 'user',)
+        fields = ('id', 'user_id',)
         depth = 2
         
 class Customers(ViewSet):
@@ -30,8 +30,9 @@ class Customers(ViewSet):
             Response -- JSON serialized customer instance
         """
 
-        try:       
-            customer = Customer.objects.get(pk=pk)
+        try:
+            customer = request.auth.user.customer       
+            # customer = Customer.objects.get(pk=pk)
             serializer = CustomerSerializer(customer, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
@@ -49,6 +50,6 @@ class Customers(ViewSet):
         if customer is not None:
             customers = customers.filter(id=customer)
 
-        serializer = CustomerSerializer(customers, many = True, context={'request': request})
+        serializer = CustomerSerializer(customers, many=True, context={'request': request})
 
         return Response(serializer.data)
