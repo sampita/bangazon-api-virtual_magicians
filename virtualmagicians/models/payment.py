@@ -7,7 +7,7 @@ class PaymentType(models.Model):
     merchant_name = models.CharField(max_length=25)
     acct_number = models.CharField(max_length=25)
     expiration_date = models.DateTimeField()
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
     
 
     class Meta:
@@ -15,4 +15,4 @@ class PaymentType(models.Model):
         verbose_name_plural = ("PaymentTypes")
 
     def __str__(self):
-        return f'Customer Id: {self.customer_id}, {self.merchant_name}'
+        return f'Customer Id: {self.customer.id}, {self.merchant_name}'

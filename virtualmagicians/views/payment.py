@@ -29,7 +29,8 @@ class PaymentTypes(ViewSet):
         new_payment_type.acct_number = request.data["acct_number"]
         new_payment_type.expiration_date = request.data["expiration_date"]
         new_payment_type.customer_id = request.auth.user.customer.id
-        new_payment_type.created_at = request.data["created_at"]
+        new_payment_type.created_at = "2020-05-02"
+        new_payment_type.save()
         
         serializer = PaymentSerializer(new_payment_type, context={'request': request})
 

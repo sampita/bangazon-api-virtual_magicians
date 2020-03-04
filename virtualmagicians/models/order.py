@@ -5,8 +5,8 @@ from .payment import PaymentType
 class Order(models.Model):
     
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING, related_name="orders")
-    # what is related_name? -SP
-    payment = models.ForeignKey(PaymentType, on_delete=models.DO_NOTHING, related_name="payment_types")
+    # related_name is nickname you can call this by later -SP
+    payment = models.ForeignKey(PaymentType, on_delete=models.DO_NOTHING, related_name="payment_type", null=True)
     created_at = models.DateTimeField()
     
     class Meta:
