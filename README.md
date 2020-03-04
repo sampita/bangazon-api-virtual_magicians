@@ -5,7 +5,7 @@
 django-admin startproject virtual-magicians-api
 
 # Create Virtual Enviroment
-python -m venv virtual-magicians-api
+python -m venv virtual-magicians-api  
 source ./virtual-magicians-api/bin/activate
 
 # Install Require Package
