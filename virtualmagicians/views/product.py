@@ -59,14 +59,47 @@ class Products(ViewSet):
             return HttpResponseServerError(ex)
 
     def list(self, request):
-        """Handle GET requests to products resource
+        """Handle GET requests for all products
+
         Returns:
-            Response -- JSON serialized list of products
+            Response -- JSON serialized product instance
         """
-        products = Product.objects.all()
+        limit = self.request.query_params.get('limit')
+        category = self.request.query_params.get('category', None)
+        user = self.request.query_params.get('self')
+
+
+        # filter for the 'home' view
+        if limit:
+            products = Product.objects.order_by('-created_at')[0:int(limit)]
+        elif category is not None:
+            products = Product.objects.filter(product_type_id=category)
+        # filter for the 'myProducts' view
+        elif user == "true":
+            products = Product.objects.filter(customer_id=request.auth.user.customer.id)
+        else:
+            products = Product.objects.all()
+
         serializer = ProductSerializer(
-            products, many=True, context={'request': request})
+                    products,
+                    many=True,
+                    context={'request': request}
+                )
+
+
         return Response(serializer.data)
+
+    # def list(self, request):
+    #     """Handle GET requests to products resource
+    #     Returns:
+    #         Response -- JSON serialized list of products
+    #     """
+    #     products = Product.objects.all()
+    #     serializer = ProductSerializer(
+    #         products, many=True, context={'request': request})
+    #     return Response(serializer.data)
+
+
 
     # def update(self, request, pk=None):
     #     """Handle PUT requests for a park area
