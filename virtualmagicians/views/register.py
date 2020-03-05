@@ -63,7 +63,8 @@ def register_user(request):
     )
 
     customer = Customer.objects.create(
-        user=new_user
+        user=new_user,
+        address=request.data["address"]
     )
 
     # Commit the user to the database by saving it
