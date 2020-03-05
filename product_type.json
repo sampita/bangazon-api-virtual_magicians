@@ -1,0 +1,1 @@
+[{"model": "virtualmagicians.producttype", "pk": 1, "fields": {"name": "Electronic"}}, {"model": "virtualmagicians.producttype", "pk": 2, "fields": {"name": "Furniture"}}, {"model": "virtualmagicians.producttype", "pk": 3, "fields": {"name": "Misc"}}]
