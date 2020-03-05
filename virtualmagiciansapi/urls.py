@@ -2,12 +2,13 @@
 from django.urls import include, path
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
-from virtualmagicians.views import register_user, login_user, Customers, Products, Users, PaymentTypes, ProductTypes
+from virtualmagicians.views import register_user, login_user, Customers, Products, Users, PaymentTypes, ProductTypes, Orders
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'customers', Customers, 'customer')
 router.register(r'products', Products, 'product')
 router.register(r'users', Users, 'user')
+router.register(r'orders', Orders, 'order')
 router.register(r'payment_types', PaymentTypes, 'payment_type')
 router.register(r'product_types', ProductTypes, 'product_type')
 
