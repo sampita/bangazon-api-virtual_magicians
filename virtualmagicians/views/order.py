@@ -53,15 +53,3 @@ class Orders(ViewSet):
         serializer = OrderSerializer(orders, many=True, context={'request': request})
 
         return Response(serializer.data)
-    
-    
-    
-    # def list(self, request):
-    #     """Handle GET requests to products resource
-    #     Returns:
-    #         Response -- JSON serialized list of products
-    #     """
-    #     products = Product.objects.all()
-    #     serializer = ProductSerializer(
-    #         products, many=True, context={'request': request})
-    #     return Response(serializer.data)
