@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'virtualmagicians',
-    # 'safedelete',
+    'safedelete',
 ]
 
 REST_FRAMEWORK = {
