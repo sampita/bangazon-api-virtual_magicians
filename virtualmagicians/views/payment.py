@@ -19,7 +19,7 @@ class PaymentSerializer(serializers.HyperlinkedModelSerializer):
             view_name='payment',
             lookup_field='id'
         )
-        fields = ('id', 'merchant_name', 'acct_number', 'expiration_date', 'customer_id', 'created_at')
+        fields = ('id', 'merchant_name', 'acct_number', 'expiration_date', 'created_at', 'customer',)
         depth = 2
 
 class PaymentTypes(ViewSet):
@@ -29,7 +29,6 @@ class PaymentTypes(ViewSet):
         new_payment_type.acct_number = request.data["acct_number"]
         new_payment_type.expiration_date = request.data["expiration_date"]
         new_payment_type.customer_id = request.auth.user.customer.id
-        new_payment_type.created_at = "2020-05-02"
         new_payment_type.save()
         
         serializer = PaymentSerializer(new_payment_type, context={'request': request})
@@ -65,3 +64,21 @@ class PaymentTypes(ViewSet):
         serializer = PaymentSerializer(payment_types, many=True, context={'request': request})
 
         return Response(serializer.data)
+
+    def destroy(self, request, pk=None):
+        """Handle DELETE requests for a  single payment-type
+
+        Returns:
+            Response -- 200, 404, or 500 status code
+        """
+        try:
+            paymenttype = PaymentType.objects.get(pk=pk)
+            paymenttype.delete()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        except PaymentType.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
