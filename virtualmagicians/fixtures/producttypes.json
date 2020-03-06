@@ -1,9 +1,0 @@
-[
-    {
-      "model": "virtualmagicians.producttype",
-      "pk": 1,
-      "fields": {
-        "name": "Couch"
-      }
-    }
-]
