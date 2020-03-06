@@ -1,11 +1,12 @@
 """View module for handling requests about products"""
+import json
 from django.http import HttpResponseServerError
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from virtualmagicians.models import Order, Product, Customer
+from virtualmagicians.models import Order, Product, Customer, OrderProduct
 from .product import ProductSerializer
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
@@ -20,21 +21,42 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             view_name='order',
             lookup_field='id'
         )
-        fields = ('id', 'customer_id', 'paymenttype_id')
+        fields = ('id', 'url', 'createdAt', 'customer', 'paymenttype')
+        depth=2
 
 
 class Orders(ViewSet):
 
     """Orders for Bangazon"""
 
+    def retrieve(self, request, pk=None):
+        """Handle get request for 1 order
+        Returns:
+            Response -- JSON serialized order instance
+        """
+
+        try:
+            order = Order.objects.get(pk=pk)
+            serializer = OrderSerializer(order, context={'request': request})
+            return Response(serializer.data)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
+
     def create(self, request):
         """Handle POST operations
         Returns:
-            Response -- JSON serialized Products instance
+        Response -- JSON serialized Products instance
         """
+        req_body = json.loads(request.body.decode())
         neworder = Order()
         neworder.customer_id = request.auth.user.customer.id
         neworder.save()
+
+        new_orderproduct = OrderProduct()
+        products = Product.objects.all()
+        new_orderproduct.order_id = neworder.id
+        new_orderproduct.product_id = req_body['product_id']
+        new_orderproduct.save()
 
         serializer = OrderSerializer(neworder, context={'request': request})
 
