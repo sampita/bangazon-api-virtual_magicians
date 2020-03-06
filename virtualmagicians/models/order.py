@@ -1,6 +1,6 @@
 from django.db import models
 # from .customer import Customer
-# from .payment import PaymentType
+from .payment import PaymentType
 
 class Order(models.Model):
     """this is a doc string - go away blue squiggly"""
