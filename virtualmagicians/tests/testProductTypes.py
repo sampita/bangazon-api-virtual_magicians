@@ -3,7 +3,7 @@ import unittest
 from rest_framework import status
 from django.test import TestCase
 from django.urls import reverse
-from virtualmagicians.models import ProductType
+from virtualmagicians.models import ProductType, Customer
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 class TestProductType(TestCase):
