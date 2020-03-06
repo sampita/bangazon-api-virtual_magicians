@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from virtualmagicians.models import Customer
+from rest_framework.decorators import action
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for customers
@@ -53,3 +54,21 @@ class Customers(ViewSet):
         serializer = CustomerSerializer(customers, many=True, context={'request': request})
 
         return Response(serializer.data)
+
+    #Custom action to update user profile
+    @action(methods=['put'], detail=False)
+    def profile_update(self, request):
+        """
+        Handle PUT requests for a customer
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        customer = Customer.objects.get(pk=request.auth.user.customer.id)
+        # customer.user.id = request.auth.user.customer.id
+        customer.address = request.data["address"]
+        # accesses the nested users last name
+        customer.user.last_name = request.data["last_name"]
+        customer.user.first_name = request.data["first_name"]
+        customer.save()
+        customer.user.save()
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
