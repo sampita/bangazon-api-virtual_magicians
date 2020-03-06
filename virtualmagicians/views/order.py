@@ -1,10 +1,12 @@
 """View module for handling requests about products"""
 from django.http import HttpResponseServerError
+from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from virtualmagicians.models import Order, Customer
+from virtualmagicians.models import Order, Product, Customer
+from .product import ProductSerializer
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for orders
@@ -52,4 +54,18 @@ class Orders(ViewSet):
 
         serializer = OrderSerializer(orders, many=True, context={'request': request})
 
+        return Response(serializer.data)
+    
+        ################# SHOPPING CART ###############################
+    # Example request:
+    #   http://localhost:8000/orders/cart
+    @action(methods=['get'], detail=False)
+    def cart(self, request):
+        current_user = Customer.objects.get(user=request.auth.user)
+        try:
+            open_order = Order.objects.get(customer=current_user, paymenttype=None)
+            products_on_order = Product.objects.filter(cart__order=open_order)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ProductSerializer(products_on_order, many=True, context={'request': request})
         return Response(serializer.data)
