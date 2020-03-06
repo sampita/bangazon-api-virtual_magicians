@@ -65,6 +65,7 @@ class Products(ViewSet):
             Response -- JSON serialized product instance
         """
         limit = self.request.query_params.get('limit')
+        search = self.request.query_params.get('search')
         category = self.request.query_params.get('category', None)
         user = self.request.query_params.get('self')
 
@@ -72,6 +73,8 @@ class Products(ViewSet):
         # filter for the 'home' view
         if limit:
             products = Product.objects.order_by('-created_at')[0:int(limit)]
+        elif search:
+            products = Product.objects.filter(name__contains=search)
         elif category is not None:
             products = Product.objects.filter(product_type_id=category)
         # filter for the 'myProducts' view
