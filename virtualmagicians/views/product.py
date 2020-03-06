@@ -91,6 +91,7 @@ class Products(ViewSet):
 
 
         return Response(serializer.data)
+    
 
     # def list(self, request):
     #     """Handle GET requests to products resource
