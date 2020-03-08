@@ -21,8 +21,9 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             view_name='order',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'createdAt', 'customer', 'payment_type',)
+        fields = ('id', 'url', 'customer', 'paymenttype',)
         depth = 2
+        # 'created_at' was in fields above
 
 
 class Orders(ViewSet):
@@ -47,14 +48,16 @@ class Orders(ViewSet):
         Returns:
         Response -- JSON serialized Products instance
         """
-        open_order = Order.objects.filter(customer_id=request.auth.user.customer.id, paymenttype=None)
+        open_order = Order.objects.get(customer_id=request.auth.user.customer.id, paymenttype_id=None)
         req_body = json.loads(request.body.decode())
         if open_order is not None:
             print(open_order)
             add_to_order = OrderProduct()
-            add_to_order.order_id = open_order.order.id
+            add_to_order.order_id = open_order.id
             add_to_order.product_id = req_body['product_id']
             add_to_order.save()
+
+            serializer = OrderSerializer(add_to_order, context={'request': request})
 
         else:
             neworder = Order()
@@ -66,7 +69,7 @@ class Orders(ViewSet):
             new_orderproduct.product_id = req_body['product_id']
             new_orderproduct.save()
 
-        serializer = OrderSerializer(neworder, context={'request': request})
+            serializer = OrderSerializer(neworder, context={'request': request})
 
         return Response(serializer.data)
 
@@ -93,7 +96,7 @@ class Orders(ViewSet):
     def cart(self, request):
         current_user = Customer.objects.get(user=request.auth.user)
         try:
-            open_order = Order.objects.get(customer=current_user, payment_type=None)
+            open_order = Order.objects.get(customer=current_user, paymenttype=None)
             products_on_order = Product.objects.filter(cart__order=open_order)
         except Order.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
