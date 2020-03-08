@@ -21,8 +21,8 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             view_name='order',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'createdAt', 'customer', 'paymenttype')
-        depth=2
+        fields = ('id', 'url', 'createdAt', 'customer', 'payment_type',)
+        depth = 2
 
 
 class Orders(ViewSet):
@@ -47,16 +47,24 @@ class Orders(ViewSet):
         Returns:
         Response -- JSON serialized Products instance
         """
+        open_order = Order.objects.filter(customer_id=request.auth.user.customer.id, paymenttype=None)
         req_body = json.loads(request.body.decode())
-        neworder = Order()
-        neworder.customer_id = request.auth.user.customer.id
-        neworder.save()
+        if open_order is not None:
+            print(open_order)
+            add_to_order = OrderProduct()
+            add_to_order.order_id = open_order.order.id
+            add_to_order.product_id = req_body['product_id']
+            add_to_order.save()
 
-        new_orderproduct = OrderProduct()
-        products = Product.objects.all()
-        new_orderproduct.order_id = neworder.id
-        new_orderproduct.product_id = req_body['product_id']
-        new_orderproduct.save()
+        else:
+            neworder = Order()
+            neworder.customer_id = request.auth.user.customer.id
+            neworder.save()
+
+            new_orderproduct = OrderProduct()
+            new_orderproduct.order_id = neworder.id
+            new_orderproduct.product_id = req_body['product_id']
+            new_orderproduct.save()
 
         serializer = OrderSerializer(neworder, context={'request': request})
 
@@ -67,7 +75,7 @@ class Orders(ViewSet):
         Returns:
             Response -- JSON serialized list of users
         """      
-        orders = Order.objects.filter(customer_id=request.auth.user.customer.id, paymenttype_id=None)
+        orders = Order.objects.filter(customer_id=request.auth.user.customer.id, payment_type_id=None)
         
         order = self.request.query_params.get('order', None)
         
@@ -85,7 +93,7 @@ class Orders(ViewSet):
     def cart(self, request):
         current_user = Customer.objects.get(user=request.auth.user)
         try:
-            open_order = Order.objects.get(customer=current_user, paymenttype=None)
+            open_order = Order.objects.get(customer=current_user, payment_type=None)
             products_on_order = Product.objects.filter(cart__order=open_order)
         except Order.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
