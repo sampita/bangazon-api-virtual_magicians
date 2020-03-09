@@ -20,7 +20,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             view_name='order',
             lookup_field='id'
         )
-        fields = ('id', 'customer_id', 'paymenttype_id')
+        fields = ('id', 'customer_id', 'payment_type_id')
 
 
 class Orders(ViewSet):
@@ -45,7 +45,7 @@ class Orders(ViewSet):
         Returns:
             Response -- JSON serialized list of users
         """      
-        orders = Order.objects.filter(customer_id=request.auth.user.customer.id, paymenttype_id=None)
+        orders = Order.objects.filter(customer_id=request.auth.user.customer.id, payment_type_id=None)
         
         order = self.request.query_params.get('order', None)
         
@@ -63,7 +63,7 @@ class Orders(ViewSet):
     def cart(self, request):
         current_user = Customer.objects.get(user=request.auth.user)
         try:
-            open_order = Order.objects.get(customer=current_user, paymenttype=None)
+            open_order = Order.objects.get(customer=current_user, payment_type=None)
             products_on_order = Product.objects.filter(cart__order=open_order)
         except Order.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
