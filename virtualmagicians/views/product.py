@@ -5,6 +5,10 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from virtualmagicians.models import Product
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for products
@@ -19,7 +23,6 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'name', 'price', 'description', 'quantity', 'location', 'created_at', 'image_path')
-
 
 class Products(ViewSet):
 
@@ -45,7 +48,8 @@ class Products(ViewSet):
 
         return Response(serializer.data)
 
-
+    #@csrf_exempt
+    @method_decorator(login_required)
     def retrieve(self, request, pk=None):
         """Handle GET requests for single product
         Returns:
@@ -58,6 +62,7 @@ class Products(ViewSet):
         except Exception as ex:
             return HttpResponseServerError(ex)
 
+    @csrf_exempt
     def list(self, request):
         """Handle GET requests for all products
 
