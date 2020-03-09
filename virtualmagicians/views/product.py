@@ -49,7 +49,7 @@ class Products(ViewSet):
         return Response(serializer.data)
 
     #@csrf_exempt
-    @method_decorator(login_required)
+    @csrf_exempt
     def retrieve(self, request, pk=None):
         """Handle GET requests for single product
         Returns:
