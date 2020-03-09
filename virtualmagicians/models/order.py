@@ -9,7 +9,7 @@ class Order(models.Model):
     # related_name is nickname you can call this by later -SP
 
     payment_type = models.ForeignKey(PaymentType, on_delete=models.CASCADE, related_name="payment_type", null=True)
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     
     class Meta:
         ordering = ("created_at", )
