@@ -1,11 +1,12 @@
 """View module for handling requests about products"""
+import json
 from django.http import HttpResponseServerError
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from virtualmagicians.models import Order, Product, Customer
+from virtualmagicians.models import Order, Product, Customer, OrderProduct
 from .product import ProductSerializer
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
@@ -20,23 +21,71 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             view_name='order',
             lookup_field='id'
         )
-        fields = ('id', 'customer_id', 'payment_type_id')
+        fields = ('id', 'url', 'customer', 'payment_type',)
+        depth = 2
 
 
 class Orders(ViewSet):
 
     """Orders for Bangazon"""
 
+    def retrieve(self, request, pk=None):
+        """Handle get request for 1 order
+        Returns:
+            Response -- JSON serialized order instance
+        """
+
+        try:
+            order = Order.objects.get(pk=pk)
+            serializer = OrderSerializer(order, context={'request': request})
+            return Response(serializer.data)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
+
     def create(self, request):
         """Handle POST operations
         Returns:
-            Response -- JSON serialized Products instance
+        Response -- JSON serialized Products instance
         """
-        neworder = Order()
-        neworder.customer_id = request.auth.user.customer.id
-        neworder.save()
+        current_user = Customer.objects.get(user=request.auth.user)
 
-        serializer = OrderSerializer(neworder, context={'request': request})
+        try:
+            open_order = Order.objects.get(customer=current_user, payment_type=None)
+
+        except Order.DoesNotExist:
+            open_order = Order()
+            open_order.customer_id = request.auth.user.customer.id
+            open_order.save()
+
+        new_orderproduct = OrderProduct()
+        new_orderproduct.order_id = open_order.id
+        new_orderproduct.product_id = request.data['product_id']
+        new_orderproduct.save()
+
+        serializer = OrderSerializer(new_orderproduct, context={'request': request})
+
+        # open_order = Order.objects.get(customer_id=request.auth.user.customer.id, paymenttype_id=None)
+        # req_body = json.loads(request.body.decode())
+        # if open_order is not None:
+        #     print(open_order)
+        #     add_to_order = OrderProduct()
+        #     add_to_order.order_id = open_order.id
+        #     add_to_order.product_id = req_body['product_id']
+        #     add_to_order.save()
+
+        #     serializer = OrderSerializer(add_to_order, context={'request': request})
+
+        # else:
+        #     neworder = Order()
+        #     neworder.customer_id = request.auth.user.customer.id
+        #     neworder.save()
+
+        #     new_orderproduct = OrderProduct()
+        #     new_orderproduct.order_id = neworder.id
+        #     new_orderproduct.product_id = req_body['product_id']
+        #     new_orderproduct.save()
+
+        #     serializer = OrderSerializer(neworder, context={'request': request})
 
         return Response(serializer.data)
 

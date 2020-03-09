@@ -54,8 +54,8 @@ class PaymentTypes(ViewSet):
         Returns:
             Response -- JSON serialized list of Payment Types
         """
-
-        payment_types = PaymentType.objects.all()
+         
+        payment_types = PaymentType.objects.filter(customer_id = request.auth.user.customer.id)
 
         payment_type = self.request.query_params.get('payment_type', None)
         if payment_type is not None:
