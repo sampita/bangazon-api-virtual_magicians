@@ -21,9 +21,8 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             view_name='order',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'customer', 'paymenttype',)
+        fields = ('id', 'url', 'customer', 'payment_type',)
         depth = 2
-        # 'created_at' was in fields above
 
 
 class Orders(ViewSet):
@@ -51,7 +50,7 @@ class Orders(ViewSet):
         current_user = Customer.objects.get(user=request.auth.user)
 
         try:
-            open_order = Order.objects.get(customer=current_user, paymenttype=None)
+            open_order = Order.objects.get(customer=current_user, payment_type=None)
 
         except Order.DoesNotExist:
             open_order = Order()
@@ -113,7 +112,7 @@ class Orders(ViewSet):
     def cart(self, request):
         current_user = Customer.objects.get(user=request.auth.user)
         try:
-            open_order = Order.objects.get(customer=current_user, paymenttype=None)
+            open_order = Order.objects.get(customer=current_user, payment_type=None)
             products_on_order = Product.objects.filter(cart__order=open_order)
         except Order.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
