@@ -62,7 +62,6 @@ class Products(ViewSet):
         except Exception as ex:
             return HttpResponseServerError(ex)
 
-    @csrf_exempt
     def list(self, request):
         """Handle GET requests for all products
 

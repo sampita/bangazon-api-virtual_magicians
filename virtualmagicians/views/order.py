@@ -64,30 +64,21 @@ class Orders(ViewSet):
 
         serializer = OrderSerializer(new_orderproduct, context={'request': request})
 
-        # open_order = Order.objects.get(customer_id=request.auth.user.customer.id, paymenttype_id=None)
-        # req_body = json.loads(request.body.decode())
-        # if open_order is not None:
-        #     print(open_order)
-        #     add_to_order = OrderProduct()
-        #     add_to_order.order_id = open_order.id
-        #     add_to_order.product_id = req_body['product_id']
-        #     add_to_order.save()
-
-        #     serializer = OrderSerializer(add_to_order, context={'request': request})
-
-        # else:
-        #     neworder = Order()
-        #     neworder.customer_id = request.auth.user.customer.id
-        #     neworder.save()
-
-        #     new_orderproduct = OrderProduct()
-        #     new_orderproduct.order_id = neworder.id
-        #     new_orderproduct.product_id = req_body['product_id']
-        #     new_orderproduct.save()
-
-        #     serializer = OrderSerializer(neworder, context={'request': request})
-
         return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        """Handle PUT requests for an order
+
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        customer = request.auth.user.customer
+        order = Order.objects.get(pk=pk)
+        order.customer_id = customer.id
+        order.payment_type_id = request.data["payment_type_id"]
+        order.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request):
         """Handle GET requests to get the open order for the logged in user/customer
@@ -111,10 +102,10 @@ class Orders(ViewSet):
     @action(methods=['get'], detail=False)
     def cart(self, request):
         current_user = Customer.objects.get(user=request.auth.user)
-        try:
-            open_order = Order.objects.get(customer=current_user, payment_type=None)
-            products_on_order = Product.objects.filter(cart__order=open_order)
-        except Order.DoesNotExist as ex:
-            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        # try:
+        open_order = Order.objects.get(customer=current_user, payment_type=None)
+        products_on_order = Product.objects.filter(cart__order=open_order)
+        # except Order.DoesNotExist as ex:
+        #     return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
         serializer = ProductSerializer(products_on_order, many=True, context={'request': request})
         return Response(serializer.data)
